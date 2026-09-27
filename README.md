@@ -2,19 +2,20 @@
 
 ## Setup
 
+- Use branch `full-database` (not `pf-batabase`)
 - `pnpm install`
 - Create `.env` from `.env.example`
 - DB container
   - `pnpm run eol` to set the correct line endings (Windows)
-  - `chmod +x ./scripts/*.sh` to make scripts executable (Linux/Mac)
+  - `chmod +x ./_entrypoint/*.sh` to make scripts executable (Linux/Mac)
   - `docker compose up -d` to start the database
 
 ## Usage
 
+- `pnpm run db:migrate` to apply migrations in `db/migration`
+- `pnpm run db:prototype` to seed test data (deletes all existing data; change `patiphan`'s `cmuAccount` in `db/prototype.ts` to your CMU account first)
+- `pnpm run db:generate` after editing `db/schema.ts` (run in a real terminal)
 - `pnpm run db:push`
-- `pnpm run db:generate`
-- `pnpm run db:migrate`
-- `pnpm run db:prototype`
 
 ## Two-tsconfig Setup
 
