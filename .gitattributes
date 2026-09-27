@@ -1,0 +1,2 @@
+# shell script ถูก mount เข้า container Linux ต้องเป็น LF เสมอ (กัน core.autocrlf แปลงเป็น CRLF)
+*.sh text eol=lf
