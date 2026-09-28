@@ -2,7 +2,7 @@
 
 ## Setup
 
-- Use branch `full-database` (not `pf-batabase`)
+- Use branch `full-database` or `main` (not `pf-batabase`)
 - `pnpm install`
 - Create `.env` from `.env.example`
 - DB container
