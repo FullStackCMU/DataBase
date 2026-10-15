@@ -7,6 +7,7 @@ import {
   varchar,
   smallint,
   text,
+  jsonb,
   unique,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
@@ -19,6 +20,8 @@ export const enrollmentRoleEnum = pgEnum("enrollment_role", [
 export const accountTypeEnum = pgEnum("account_type", ["StdAcc", "MISEmpAcc"]);
 
 export const questionTypeEnum = pgEnum("question_type", ["rating", "text"]);
+
+export const questionFocusEnum = pgEnum("question_focus", ["task", "team"]);
 
 export const submissionStatusEnum = pgEnum("submission_status", [
   "draft",
@@ -160,12 +163,19 @@ export const roundsTable = pgTable(
   (table) => [unique().on(table.courseId, table.sequenceNo)]
 );
 
+export type QuestionAnchor = { score: number; text: string };
+
 // ชุดคำถามเดียวใช้ทุกรอบ (ไม่ผูกกับรอบ) — อาจารย์ยังสร้างเองไม่ได้
 export const questionsTable = pgTable("questions", {
   id: uuid("id").primaryKey().defaultRandom(),
   orderNo: smallint("order_no").notNull(),
   type: questionTypeEnum("type").notNull(),
   prompt: text("prompt").notNull(),
+  description: text("description"),
+  // เฉพาะ rating — ระดับที่ไม่มีในนี้คือ "อยู่ระหว่าง" ระดับข้างเคียง
+  anchors: jsonb("anchors").$type<QuestionAnchor[]>(),
+  // เฉพาะ rating — แบ่งมิติเป็นด้านงาน/ด้านทีมสำหรับแผนภาพทีม
+  focus: questionFocusEnum("focus"),
 });
 
 export const submissionsTable = pgTable(
@@ -223,6 +233,30 @@ export const flagsTable = pgTable("flags", {
   modelVersion: varchar("model_version"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+// ฟีดแบ็กจากอาจารย์ถึงนักศึกษารายคน หนึ่งข้อความต่อรอบ — นักศึกษาเห็นเมื่อ feedback_released_at ถึงแล้ว
+export const instructorNotesTable = pgTable(
+  "instructor_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    roundId: uuid("round_id")
+      .references(() => roundsTable.id)
+      .notNull(),
+    studentId: uuid("student_id")
+      .references(() => usersTable.id)
+      .notNull(),
+    // อาจารย์คนล่าสุดที่แก้
+    authorId: uuid("author_id")
+      .references(() => usersTable.id)
+      .notNull(),
+    body: text("body").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [unique().on(table.roundId, table.studentId)]
+);
 
 // ถอนความยินยอมใช้ withdrawn_at ไม่ลบแถว
 export const consentsTable = pgTable(

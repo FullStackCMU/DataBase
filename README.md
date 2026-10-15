@@ -2,7 +2,7 @@
 
 ## Setup
 
-- Use branch `full-database` (not `pf-batabase`)
+- Use branch `full-database` or `main` (not `pf-batabase`)
 - `pnpm install`
 - Create `.env` from `.env.example`
 - DB container
@@ -14,6 +14,7 @@
 
 - `pnpm run db:migrate` to apply migrations in `db/migration`
 - `pnpm run db:prototype` to seed test data (deletes all existing data; test accounts are listed in Frontend `README.md`; optional: to use your own CMU account instead of `patiphan_leknok@cmu.ac.th`, change `patiphan`'s `cmuAccount` in `db/prototype.ts` first)
+- `pnpm run db:seed-rubric` to insert/update only the question set (safe on a database with real data; use this instead of `db:prototype` when deploying)
 - `pnpm run db:generate` after editing `db/schema.ts` (run in a real terminal)
 - `pnpm run db:push`
 

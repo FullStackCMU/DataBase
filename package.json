@@ -8,6 +8,7 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:prototype": "tsx ./db/prototype.ts",
+    "db:seed-rubric": "tsx ./db/seed-rubric.ts",
     "build": "tsc && tsc-alias",
     "eol": "eolConverter _entrypoint/*.sh"
   },
